@@ -5,24 +5,40 @@ require 'sloth/version'
 require 'page-object'
 
 module Sloth
+  SUPPORTED_PO_LIBS = [PageObject]
+
+  attr_reader :po_lib, :_underlying_elements
+
   def self.included(base)
     base.extend ClassMethods
   end
 
   def initialize(browser)
-    if self.class.ancestors.any? { |a| a == PageObject }
+    @po_lib = self.class.ancestors.find { |a| SUPPORTED_PO_LIBS.include? a }
+    raise StandardError, 'Could not determine what page object platform is being used.' unless @po_lib
 
+    @_underlying_elements = []
+    gather_underlying_elements
+  end
+
+  def gather_underlying_elements
+    if @po_lib == PageObject
+      _required_elements.each do |e|
+        if respond_to? "#{e}_element"
+          @_underlying_elements << method("#{e}_element".to_sym).call
+        end
+      end
     end
   end
 
-  def something
-    puts 'sometjhin'
+  def wait_for_required_elements
+    puts @_underlying_elements
   end
 
   module ClassMethods
     def required(*elements)
-      define_method('wait_for_required_elements') do
-
+      define_method('_required_elements') do
+        elements
       end
     end
 
@@ -34,6 +50,5 @@ module Sloth
         raise Sloth::Exceptions::Timeout
       end
     end
-    alias_method :loaded?, :wait_for
   end
 end

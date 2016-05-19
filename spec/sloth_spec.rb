@@ -1,13 +1,4 @@
-require 'sloth'
-require 'page-object'
-require 'watir-webdriver'
-
-def mock_watir_browser
-  watir_browser = double('watir')
-  allow(watir_browser).to receive(:is_a?).with(anything()).and_return(false)
-  allow(watir_browser).to receive(:is_a?).with(Watir::Browser).and_return(true)
-  watir_browser
-end
+require 'spec_helper'
 
 module Sloth
   context 'when included' do
@@ -19,11 +10,15 @@ module Sloth
       required :foo
     end
 
-    let(:browser) { mock_watir_browser }
+    let(:browser) { watir_browser }
     let(:page) { SomePage.new browser }
 
     it 'extends ClassMethods' do
       expect(SomePage.ancestors).to include Sloth::ClassMethods
+    end
+
+    it 'determines the platform' do
+      expect(page.po_lib).to eq PageObject
     end
 
     describe '.wait_for' do
@@ -32,33 +27,33 @@ module Sloth
       end
     end
 
+    describe '.gather_underlying_elements' do
+      it 'respond_to' do
+        expect(page).to respond_to :gather_underlying_elements
+      end
+
+      it 'returns only objects for the specified platform' do
+        page.gather_underlying_elements
+        expect(page._required_elements.size).to be 1
+      end
+    end
+
     describe '.required' do
       it 'responds to' do
         expect(SomePage).to respond_to :required
       end
 
-      it 'creates .wait_for_required_elements' do
+      it 'defines a method .wait_for_required_elements' do
         expect(page).to respond_to :wait_for_required_elements
+      end
+
+      describe '.wait_for_required_elements' do
+        before { page.wait_for_required_elements }
       end
     end
   end
 
-  context 'when initialized' do
-    let(:browser) { mock_watir_browser }
-
-    class RandomPage
-      include PageObject
-      include Sloth
-
-      button :foo, id: 'foo'
-    end
-
-    it 'lists ancestors' do
-      RandomPage.new browser
-    end
-  end
-
-  describe '.wait_for' do
+  describe '.wait_for', type: :slow do
     class SomePage
       include Sloth
     end
