@@ -1,6 +1,6 @@
 module Sloth
   class Timer
-    attr_accessor :timeout, :polling
+    attr_accessor :timeout, :polling, :block
 
     def initialize(timeout=30, polling=1, &block)
       @timeout = timeout
@@ -16,6 +16,7 @@ module Sloth
         sleep @polling
         @timeout = @timeout - @polling
       end
+
       @latest_result
     end
   end

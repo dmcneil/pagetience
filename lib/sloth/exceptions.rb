@@ -1,6 +1,6 @@
 module Sloth
   module Exceptions
-    class SlothTimeout
+    class Timeout < StandardError
     end
   end
 end
