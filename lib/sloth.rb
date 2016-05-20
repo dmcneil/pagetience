@@ -2,8 +2,6 @@ require 'sloth/exceptions'
 require 'sloth/timer'
 require 'sloth/version'
 
-# require 'page-object'
-
 module Sloth
   SUPPORTED_ELEMENT_LIBS = [PageObject]
 
@@ -31,7 +29,7 @@ module Sloth
   end
 
   def loaded?
-    @loaded
+    !!@loaded
   end
 
   def gather_underlying_elements
@@ -45,14 +43,16 @@ module Sloth
   end
 
   def wait_for_required_elements
-    timer = Sloth::Timer.new do
-      return if loaded?
-      if @_underlying_elements.any? { |e| !e.visible? }
-        puts @_underlying_elements.find { |e| !e.visible? }
-        @loaded = false
+    timer = Sloth::Timer.new(5, 1) do
+      unless @_underlying_elements.any? { |e| !e.visible? }
+        @loaded = true
       end
     end
-    @loaded = timer.run
+    timer.run_until true
+
+    unless loaded?
+      raise Sloth::Exceptions::Timeout, "Timed out after polling every #{timer.polling}s for #{timer.timeout}s waiting for the page to be loaded."
+    end
   end
 
   module ClassMethods
@@ -60,15 +60,6 @@ module Sloth
       elements.keep_if { |e| e.is_a? Symbol }
       define_method('_required_elements') do
         elements
-      end
-    end
-
-    def wait_for(timeout=30, polling=1, &block)
-      timer = Sloth::Timer.new(timeout, polling)
-      timer.block = block
-      result = timer.run
-      if result == nil || result == false
-        raise Sloth::Exceptions::Timeout
       end
     end
   end

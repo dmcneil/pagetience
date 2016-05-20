@@ -26,10 +26,8 @@ describe Sloth do
       expect(page.element_lib).to eq PageObject
     end
 
-    describe '.wait_for' do
-      it 'responds to' do
-        expect(SomePage).to respond_to :wait_for
-      end
+    it 'should not be loaded' do
+      expect(page.loaded?).to eq false
     end
 
     describe '.gather_underlying_elements' do
@@ -53,8 +51,13 @@ describe Sloth do
 
       describe '.wait_for_required_elements' do
         it 'should be loaded when all the required elements are visible' do
+          allow(element).to receive(:visible?).and_return false
+          begin
+            page.wait_for_required_elements
+          rescue
+            # ignored
+          end
           allow(element).to receive(:visible?).and_return true
-          expect(page.loaded?).to be false
           page.wait_for_required_elements
           expect(page.loaded?).to be true
         end
