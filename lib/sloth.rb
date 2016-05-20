@@ -7,6 +7,8 @@ require 'page-object'
 module Sloth
   SUPPORTED_PO_LIBS = [PageObject]
 
+  attr_reader :browser
+
   attr_reader :po_lib, :_underlying_elements
 
   def self.included(base)
@@ -16,6 +18,7 @@ module Sloth
   def initialize(browser)
     @po_lib = self.class.ancestors.find { |a| SUPPORTED_PO_LIBS.include? a }
     raise StandardError, 'Could not determine what page object platform is being used.' unless @po_lib
+    super browser if @po_lib == PageObject
 
     @_underlying_elements = []
     gather_underlying_elements
@@ -25,7 +28,7 @@ module Sloth
     if @po_lib == PageObject
       _required_elements.each do |e|
         if respond_to? "#{e}_element"
-          # self.send("#{e}_element")
+          @_underlying_elements << self.send("#{e}_element").element
         end
       end
     end

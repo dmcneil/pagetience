@@ -1,18 +1,22 @@
 require 'spec_helper'
 
-module Sloth
+class SomePage
+  include PageObject
+  include Sloth
+
+  button :foo, id: 'foo'
+  required :foo
+end
+
+describe Sloth do
+  let(:browser) { mock_watir_browser }
+  let(:page) { SomePage.new(browser) }
+
+  before {
+    allow(browser).to receive(:button).with({id: 'foo'}).and_return(browser)
+  }
+
   context 'when included' do
-    class SomePage
-      include PageObject
-      include Sloth
-
-      button :foo, id: 'foo'
-      required :foo
-    end
-
-    let(:browser) { watir_browser }
-    let(:page) { SomePage.new browser }
-
     it 'extends ClassMethods' do
       expect(SomePage.ancestors).to include Sloth::ClassMethods
     end
@@ -33,12 +37,7 @@ module Sloth
       end
 
       it 'returns only objects for the specified platform' do
-        allow(browser).to receive(:button).with(id: 'foo').and_return('test')
-        element = page.foo_element
-        expect(element).to be_instance_of PageObject::Elements::Button
-
-        # page.gather_underlying_elements
-        # expect(page._required_elements.size).to be 1
+        expect(page._underlying_elements.size).to be 1
       end
     end
 
@@ -58,10 +57,6 @@ module Sloth
   end
 
   describe '.wait_for', type: :slow do
-    class SomePage
-      include Sloth
-    end
-
     it 'will wait for a truthy block' do
       calls = []
       truthy = false

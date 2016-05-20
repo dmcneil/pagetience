@@ -1,12 +1,15 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-require_relative '../lib/sloth'
-
-require 'page-object'
+require 'rspec'
 require 'watir-webdriver'
+require 'selenium-webdriver'
+require 'page-object'
 
-def watir_browser
-  watir_browser = instance_double(Watir::Browser)
+require 'sloth'
+
+def mock_watir_browser
+  watir_browser = double('watir')
   allow(watir_browser).to receive(:is_a?).with(anything()).and_return(false)
   allow(watir_browser).to receive(:is_a?).with(Watir::Browser).and_return(true)
   watir_browser
