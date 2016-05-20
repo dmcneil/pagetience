@@ -33,8 +33,12 @@ module Sloth
       end
 
       it 'returns only objects for the specified platform' do
-        page.gather_underlying_elements
-        expect(page._required_elements.size).to be 1
+        allow(browser).to receive(:button).with(id: 'foo').and_return('test')
+        element = page.foo_element
+        expect(element).to be_instance_of PageObject::Elements::Button
+
+        # page.gather_underlying_elements
+        # expect(page._required_elements.size).to be 1
       end
     end
 

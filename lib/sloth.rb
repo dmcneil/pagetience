@@ -25,7 +25,7 @@ module Sloth
     if @po_lib == PageObject
       _required_elements.each do |e|
         if respond_to? "#{e}_element"
-          @_underlying_elements << method("#{e}_element".to_sym).call
+          # self.send("#{e}_element")
         end
       end
     end
