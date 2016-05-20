@@ -1,4 +1,4 @@
-module Sloth
+module Pagetience
   class Timer
     attr_accessor :timeout, :polling, :block
 

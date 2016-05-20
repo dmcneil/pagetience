@@ -8,8 +8,9 @@ require 'watir-webdriver'
 require 'selenium-webdriver'
 require 'page-object'
 
-require 'sloth'
+require 'pagetience'
 
+# Borrowed from page-object gem specs
 def mock_watir_browser
   watir_browser = double('watir')
   allow(watir_browser).to receive(:is_a?).with(anything()).and_return(false)

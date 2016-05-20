@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'sloth/version'
+require 'pagetience/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'sloth'
-  spec.version       = Sloth::VERSION
+  spec.name          = 'pagetience'
+  spec.version       = Pagetience::VERSION
   spec.authors       = ['Derek McNeil']
   spec.email         = ['derek.mcneil90@gmail.com']
 
   spec.summary       = %q{A simple gem for making page object waiting easy.}
-  spec.homepage      = 'http://www.github.com/dmcneil/sloth'
+  spec.homepage      = 'http://www.github.com/dmcneil/pagetience'
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

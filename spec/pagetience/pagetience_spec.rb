@@ -2,13 +2,13 @@ require 'spec_helper'
 
 class SomePage
   include PageObject
-  include Sloth
+  include Pagetience
 
   element :foo, id: 'foo'
   required :foo
 end
 
-describe Sloth do
+describe Pagetience do
   let(:browser) { mock_watir_browser }
   let(:page) { SomePage.new(browser) }
   let(:element) { instance_double(Watir::Element) }
@@ -19,7 +19,7 @@ describe Sloth do
 
   context 'when included' do
     it 'extends ClassMethods' do
-      expect(SomePage.ancestors).to include Sloth::ClassMethods
+      expect(SomePage.ancestors).to include Pagetience::ClassMethods
     end
 
     it 'determines the platform' do
@@ -64,25 +64,9 @@ describe Sloth do
 
         it 'should timeout if an element is never visible' do
           allow(element).to receive(:visible?).and_return false
-          expect { page.wait_for_required_elements }.to raise_error Sloth::Exceptions::Timeout
+          expect { page.wait_for_required_elements }.to raise_error Pagetience::Exceptions::Timeout
         end
       end
-    end
-  end
-
-  describe '.wait_for', type: :slow do
-    it 'will wait for a truthy block' do
-      calls = []
-      truthy = false
-      expect{ SomePage.wait_for(11, 3) { calls << truthy; truthy }}.to raise_error Sloth::Exceptions::Timeout
-      expect(calls.size).to eq 3
-      calls.each { |c| expect(c).to eq false }
-
-      calls = []
-      truthy = true
-      SomePage.wait_for(5, 3) { calls << truthy; truthy }
-      expect(calls.size).to eq 1
-      expect(calls[0]).to eq true
     end
   end
 end

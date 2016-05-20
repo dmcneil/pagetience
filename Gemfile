@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in sloth.gemspec
+# Specify your gem's dependencies in pagetience.gemspec
 gemspec

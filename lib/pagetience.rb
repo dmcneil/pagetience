@@ -1,8 +1,8 @@
-require 'sloth/exceptions'
-require 'sloth/timer'
-require 'sloth/version'
+require 'pagetience/exceptions'
+require 'pagetience/timer'
+require 'pagetience/version'
 
-module Sloth
+module Pagetience
   SUPPORTED_ELEMENT_LIBS = [PageObject]
 
   attr_reader :browser
@@ -43,7 +43,7 @@ module Sloth
   end
 
   def wait_for_required_elements
-    timer = Sloth::Timer.new(5, 1) do
+    timer = Pagetience::Timer.new(5, 1) do
       unless @_underlying_elements.any? { |e| !e.visible? }
         @loaded = true
       end
@@ -51,7 +51,7 @@ module Sloth
     timer.run_until true
 
     unless loaded?
-      raise Sloth::Exceptions::Timeout, "Timed out after polling every #{timer.polling}s for #{timer.timeout}s waiting for the page to be loaded."
+      raise Pagetience::Exceptions::Timeout, "Timed out after polling every #{timer.polling}s for #{timer.timeout}s waiting for the page to be loaded."
     end
   end
 
