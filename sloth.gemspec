@@ -31,6 +31,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'guard', '~> 2.13.0'
   spec.add_development_dependency 'guard-rspec', '~> 4.6.5'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'pry-byebug'
 
   spec.add_dependency 'page-object' , '~> 1.1.1'
   spec.add_dependency 'watir-webdriver', '~> 0.9.0'

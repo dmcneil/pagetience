@@ -4,16 +4,17 @@ class SomePage
   include PageObject
   include Sloth
 
-  button :foo, id: 'foo'
+  element :foo, id: 'foo'
   required :foo
 end
 
 describe Sloth do
   let(:browser) { mock_watir_browser }
   let(:page) { SomePage.new(browser) }
+  let(:element) { instance_double(Watir::Element) }
 
   before {
-    allow(browser).to receive(:button).with({id: 'foo'}).and_return(browser)
+    allow(browser).to receive(:element).with({id: 'foo'}).and_return(element)
   }
 
   context 'when included' do
@@ -22,7 +23,7 @@ describe Sloth do
     end
 
     it 'determines the platform' do
-      expect(page.po_lib).to eq PageObject
+      expect(page.element_lib).to eq PageObject
     end
 
     describe '.wait_for' do
@@ -42,16 +43,26 @@ describe Sloth do
     end
 
     describe '.required' do
-      it 'responds to' do
+      it 'should add the method to the page' do
         expect(SomePage).to respond_to :required
       end
 
-      it 'defines a method .wait_for_required_elements' do
+      it 'should define .wait_for_required_elements' do
         expect(page).to respond_to :wait_for_required_elements
       end
 
       describe '.wait_for_required_elements' do
-        before { page.wait_for_required_elements }
+        it 'should be loaded when all the required elements are visible' do
+          allow(element).to receive(:visible?).and_return true
+          expect(page.loaded?).to be false
+          page.wait_for_required_elements
+          expect(page.loaded?).to be true
+        end
+
+        it 'should timeout if an element is never visible' do
+          allow(element).to receive(:visible?).and_return false
+          expect { page.wait_for_required_elements }.to raise_error Sloth::Exceptions::Timeout
+        end
       end
     end
   end

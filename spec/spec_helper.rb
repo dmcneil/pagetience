@@ -14,3 +14,7 @@ def mock_watir_browser
   allow(watir_browser).to receive(:is_a?).with(Watir::Browser).and_return(true)
   watir_browser
 end
+
+RSpec.configure do |c|
+  c.filter_run_excluding type: :slow
+end
