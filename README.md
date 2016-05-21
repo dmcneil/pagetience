@@ -1,4 +1,6 @@
 # Pagetience
+[![Build Status](https://travis-ci.org/dmcneil/pagetience.svg?branch=master)](https://travis-ci.org/dmcneil/pagetience)
+
 Pronounced like "patience".
 
 A simple gem to verify pages and important elements are loaded.
