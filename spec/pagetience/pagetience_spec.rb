@@ -6,6 +6,7 @@ class SomePage
 
   element :foo, id: 'foo'
   required :foo
+  waiting 3, 1
 end
 
 describe Pagetience do
@@ -25,6 +26,21 @@ describe Pagetience do
 
     it 'determines the platform' do
       expect(page.element_lib).to eq PageObject
+    end
+
+    describe 'waiting defaults' do
+      class WaitingDefaultsPage
+        include PageObject
+        include Pagetience
+
+        element :foo, id: 'foo'
+        required :foo
+      end
+
+      it 'should set the defaults' do
+        expect(WaitingDefaultsPage.new(browser)._waiting_timeout).to eq 30
+        expect(WaitingDefaultsPage.new(browser)._waiting_polling).to eq 1
+      end
     end
 
     describe '.gather_underlying_elements' do
@@ -63,6 +79,28 @@ describe Pagetience do
           allow(element).to receive(:visible?).and_return false
           expect { page.wait_for_required_elements }.to raise_error Pagetience::Exceptions::Timeout
         end
+
+        it 'should use the timeout specified by the waiting method' do
+          expect(page._poller.timeout).to eq 3
+        end
+
+        it 'should use the polling specified by the waiting method' do
+          expect(page._poller.polling).to eq 1
+        end
+      end
+    end
+
+    describe '.waiting' do
+      it 'should be added to the class' do
+        expect(SomePage).to respond_to :waiting
+      end
+
+      it 'should set the timeout' do
+        expect(page._waiting_timeout).to eq 3
+      end
+
+      it 'should set the polling' do
+        expect(page._waiting_polling).to eq 1
       end
     end
   end

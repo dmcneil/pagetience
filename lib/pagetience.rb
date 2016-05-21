@@ -5,11 +5,13 @@ require 'pagetience/version'
 module Pagetience
   SUPPORTED_ELEMENT_LIBS = [PageObject]
 
+  attr_accessor :_waiting_timeout, :_waiting_polling
+
   attr_reader :browser
   attr_reader :loaded
 
   attr_reader :element_lib
-  attr_reader :_required_elements, :_underlying_elements
+  attr_reader :_poller, :_required_elements, :_underlying_elements
 
   def self.included(base)
     base.extend ClassMethods
@@ -23,6 +25,8 @@ module Pagetience
 
     @browser = browser
     @loaded = false
+    @_waiting_timeout = _waiting_timeout || 30
+    @_waiting_polling = _waiting_polling || 1
 
     @_required_elements = _required_elements || []
     @_underlying_elements = []
@@ -36,7 +40,7 @@ module Pagetience
 
   def gather_underlying_elements
     if @element_lib == PageObject
-      _required_elements.each do |e|
+      @_required_elements.each do |e|
         if respond_to? "#{e}_element"
           @_underlying_elements << self.send("#{e}_element").element
         end
@@ -45,7 +49,7 @@ module Pagetience
   end
 
   def wait_for_required_elements
-    timer = Pagetience::Timer.new(5, 1) do
+    @_poller = Pagetience::Timer.new(@_waiting_timeout, @_waiting_polling) do
       begin
         unless @_underlying_elements.any? { |e| !e.visible? }
           @loaded = true
@@ -54,10 +58,10 @@ module Pagetience
         # TODO implement better strategy for certain platforms
       end
     end
-    timer.run_until true
+    @_poller.run_until true
 
     unless loaded?
-      raise Pagetience::Exceptions::Timeout, "Timed out after polling every #{timer.polling}s for #{timer.timeout}s waiting for the page to be loaded."
+      raise Pagetience::Exceptions::Timeout, "Timed out after polling every #{@_poller.polling}s for #{@_poller.timeout}s waiting for the page to be loaded."
     end
   end
 
@@ -66,6 +70,15 @@ module Pagetience
       elements.keep_if { |e| e.is_a? Symbol }
       define_method('_required_elements') do
         elements
+      end
+    end
+
+    def waiting(timeout, polling=1)
+      define_method('_waiting_timeout') do
+        timeout
+      end
+      define_method('_waiting_polling') do
+        polling
       end
     end
   end
