@@ -23,7 +23,7 @@ To use **Pagetience**, simply `include Pagetience` in your page object class and
 class GooglePage
   include PageObject
   include Pagetience
-  &
+
   text_field :search, name: 'q'
   required :search
 end
@@ -40,7 +40,7 @@ The default timeout is **30** seconds, polling every second.
 class GooglePage
   include PageObject
   include Pagetience
-  &
+      
   text_field :search, name: 'q'
   required :search
   waiting 60, 5 # wait up to 60 seconds, polling every 5 seconds
