@@ -1,4 +1,6 @@
 # Pagetience
+Pronounced like "patience".
+
 A simple gem to verify pages and important elements are loaded.
 
 ## Installation
