@@ -15,6 +15,7 @@ describe Pagetience do
 
   before {
     allow(browser).to receive(:element).with({id: 'foo'}).and_return(element)
+    allow(element).to receive(:visible?).and_return(true)
   }
 
   context 'when included' do
@@ -24,10 +25,6 @@ describe Pagetience do
 
     it 'determines the platform' do
       expect(page.element_lib).to eq PageObject
-    end
-
-    it 'should not be loaded' do
-      expect(page.loaded?).to eq false
     end
 
     describe '.gather_underlying_elements' do

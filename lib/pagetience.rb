@@ -18,6 +18,7 @@ module Pagetience
   def initialize(browser)
     @element_lib = self.class.ancestors.find { |m| SUPPORTED_ELEMENT_LIBS.include? m }
     raise StandardError, 'Could not determine what page object platform is being used.' unless @element_lib
+
     PageObject.instance_method(:initialize).bind(self).call(browser) if @element_lib == PageObject
 
     @browser = browser
@@ -26,6 +27,7 @@ module Pagetience
     @_required_elements = _required_elements || []
     @_underlying_elements = []
     gather_underlying_elements
+    wait_for_required_elements
   end
 
   def loaded?
@@ -44,8 +46,12 @@ module Pagetience
 
   def wait_for_required_elements
     timer = Pagetience::Timer.new(5, 1) do
-      unless @_underlying_elements.any? { |e| !e.visible? }
-        @loaded = true
+      begin
+        unless @_underlying_elements.any? { |e| !e.visible? }
+          @loaded = true
+        end
+      rescue
+        # TODO implement better strategy for certain platforms
       end
     end
     timer.run_until true
