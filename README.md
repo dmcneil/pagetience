@@ -40,7 +40,7 @@ The default timeout is **30** seconds, polling every second.
 class GooglePage
   include PageObject
   include Pagetience
-      
+
   text_field :search, name: 'q'
   required :search
   waiting 60, 5 # wait up to 60 seconds, polling every 5 seconds
@@ -49,7 +49,7 @@ end
 
 ## Notes/Todo/Issues
 ### IMPORTANT
-Currently, this gem only works with the [page-object](https://github.com/cheezy/page-object)gem. It's a high priority to make working with other page object/webdriver libraries easier.
+Currently, this gem only works with the [page-object](https://github.com/cheezy/page-object) gem. It's a high priority to make working with other page object/webdriver libraries easier.
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/dmcneil/pagetience.
