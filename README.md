@@ -3,7 +3,7 @@
 
 Pronounced like "patience".
 
-A simple gem to verify pages and important elements are loaded.
+Using a simple DSL, you can declare which of your page object elements must be present and visible on the page before your code can consider it **loaded**.
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -51,9 +51,15 @@ class GooglePage
 end
 ```
 
-## Notes/Todo/Issues
-### IMPORTANT
+## Supported Platforms
 Currently, this gem only works with the [page-object](https://github.com/cheezy/page-object) gem. It's a high priority to make working with other page object/webdriver libraries easier.
+
+## Notes/Todo/Issues
+1. Add platform support for Selenium WebDriver
+2. Add platform support for Watir WebDriver
+3. SitePrism?
+4. Documentation
+5. Organize unit tests
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/dmcneil/pagetience.
