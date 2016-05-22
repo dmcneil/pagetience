@@ -26,12 +26,6 @@ module Pagetience
     end
   end
 
-  SUPPORTED_PLATFORMS = {
-      ancestors: [
-          {name: 'page-object', module: PageObject, platform: Pagetience::Platforms::PageObjectGem}
-      ]
-  }
-
   attr_accessor :_waiting_timeout, :_waiting_polling
 
   attr_reader :browser
@@ -90,18 +84,8 @@ module Pagetience
   private
 
   def determine_platform
-    # Search the ancestors
-    self.class.ancestors.find { |a| SUPPORTED_PLATFORMS[:ancestors].include? a }
-    SUPPORTED_PLATFORMS[:ancestors].each do |p|
-      if self.class.ancestors.include? p[:module]
-        @element_platform = p[:platform].new self
-      end
-    end
+    @element_platform = Pagetience::Platforms::Base.find(self)
 
     raise StandardError, 'Could not determine what page object platform is being used.' unless @element_platform
-  end
-
-  def platform_in_ancestors?
-    self.class.ancestors.find {}
   end
 end

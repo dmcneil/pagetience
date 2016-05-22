@@ -32,7 +32,7 @@ describe Pagetience::Platforms::Base do
     let(:page) { SomePageWithInclude.new browser }
 
     it 'should search the ancestors' do
-      expect(Pagetience::Platforms::Base.find(page)).to eq Pagetience::Platforms::PageObjectGem
+      expect(Pagetience::Platforms::Base.find(page)).to be_a_kind_of Pagetience::Platforms::PageObjectGem
     end
   end
 end

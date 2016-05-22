@@ -5,7 +5,7 @@ module Pagetience
 
       class << self
         def find(klazz)
-          ANCESTORS.find { |a| a.present? klazz }
+          ANCESTORS.find { |a| a.present? klazz }.new klazz
         end
       end
 
