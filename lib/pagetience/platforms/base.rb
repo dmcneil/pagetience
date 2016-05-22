@@ -3,6 +3,12 @@ module Pagetience
     class Base
       attr_reader :browser
 
+      class << self
+        def find(klazz)
+          ANCESTORS.find { |a| a.present? klazz }
+        end
+      end
+
       def initialize(*args)
         @browser = nil
       end

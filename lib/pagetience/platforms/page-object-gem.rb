@@ -3,6 +3,12 @@ module Pagetience
     class PageObjectGem < Base
       attr_reader :page_object_instance
 
+      class << self
+        def present?(klazz)
+          klazz.class.ancestors.include? PageObject
+        end
+      end
+
       def initialize(klazz)
         super
 

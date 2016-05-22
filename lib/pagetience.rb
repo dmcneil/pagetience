@@ -3,7 +3,9 @@ require 'pagetience/timer'
 require 'pagetience/version'
 
 require 'pagetience/platforms/base'
-require 'pagetience/platforms/page-object'
+require 'pagetience/platforms/page-object-gem'
+
+require 'pagetience/platforms/platforms'
 
 module Pagetience
   module ClassMethods
@@ -97,5 +99,9 @@ module Pagetience
     end
 
     raise StandardError, 'Could not determine what page object platform is being used.' unless @element_platform
+  end
+
+  def platform_in_ancestors?
+    self.class.ancestors.find {}
   end
 end

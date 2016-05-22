@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+class SomePageWithInclude
+  include PageObject
+end
+
 describe Pagetience::Platforms::Base do
   let (:platform) { Pagetience::Platforms::Base.new }
 
@@ -17,5 +21,18 @@ describe Pagetience::Platforms::Base do
 
   it 'should respond to browser' do
     expect(platform).to respond_to(:browser)
+  end
+
+  it 'should respond to self.present?(klazz)' do
+    expect(Pagetience::Platforms::Base).to respond_to(:find).with(1).argument
+  end
+
+  describe 'self.present(?klazz)' do
+    let(:browser) { mock_watir_browser }
+    let(:page) { SomePageWithInclude.new browser }
+
+    it 'should search the ancestors' do
+      expect(Pagetience::Platforms::Base.find(page)).to eq Pagetience::Platforms::PageObjectGem
+    end
   end
 end
