@@ -9,6 +9,10 @@ class SomePage
   waiting 3, 1
 end
 
+class SomePageWithoutPlatform
+  include Pagetience
+end
+
 describe Pagetience do
   let(:browser) { mock_watir_browser }
   let(:page) { SomePage.new(browser) }
@@ -20,12 +24,24 @@ describe Pagetience do
   }
 
   context 'when included' do
-    it 'extends ClassMethods' do
+    it 'should extend ClassMethods' do
       expect(SomePage.ancestors).to include Pagetience::ClassMethods
     end
 
-    it 'determines the platform' do
-      expect(page.element_lib).to eq PageObject
+    it 'should look at ancestors for a supported platform' do
+      expect(page.element_platform).to be_a_kind_of Pagetience::ElementPlatforms::PageObjectGem
+    end
+
+    it 'should look for a browser variable' do
+      # pending
+    end
+
+    it 'should look for a known browser in any instance variables' do
+      # pending
+    end
+
+    it 'should raise an exception if no platform found' do
+      expect{SomePageWithoutPlatform.new(browser)}.to raise_error Pagetience::Exceptions::Platform
     end
 
     describe 'waiting defaults' do
