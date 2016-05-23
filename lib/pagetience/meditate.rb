@@ -1,5 +1,5 @@
 module Pagetience
-  class Timer
+  class Meditate
     attr_accessor :timeout, :polling, :block
 
     def initialize(timeout=30, polling=1, &block)
@@ -8,7 +8,7 @@ module Pagetience
       @block = block
     end
 
-    def run_until(expected=nil)
+    def until_enlightened(expected=nil, msg='Timed out waiting for the expected result.')
       raise ArgumentError, 'Timeout cannot be lower than the polling value.' unless @timeout > @polling
 
       while @timeout > 0 && @timeout > @polling
@@ -18,8 +18,9 @@ module Pagetience
         @timeout = @timeout - @polling
       end
 
+      raise Pagetience::Exceptions::Timeout, msg unless @latest_result
+
       @latest_result
     end
-    alias_method :run, :run_until
   end
 end

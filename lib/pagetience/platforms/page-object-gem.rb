@@ -1,5 +1,5 @@
 module Pagetience
-  module Platforms
+  module ElementPlatforms
     class PageObjectGem < Base
       attr_reader :page_object_instance
 

@@ -1,11 +1,11 @@
 require 'pagetience/exceptions'
-require 'pagetience/timer'
+require 'pagetience/meditate'
 require 'pagetience/version'
 
 require 'pagetience/platforms/base'
 require 'pagetience/platforms/page-object-gem'
 
-require 'pagetience/platforms/platforms'
+require 'pagetience/platforms/element_platforms'
 
 module Pagetience
   module ClassMethods
@@ -65,7 +65,7 @@ module Pagetience
   end
 
   def wait_for_required_elements
-    @_poller = Pagetience::Timer.new(@_waiting_timeout, @_waiting_polling) do
+    @_poller = Pagetience::Meditate.new(@_waiting_timeout, @_waiting_polling) do
       begin
         unless @_underlying_elements.any? { |e| !e.visible? }
           @loaded = true
@@ -74,7 +74,7 @@ module Pagetience
         # TODO implement better strategy for certain platforms
       end
     end
-    @_poller.run_until true
+    @_poller.until_enlightened true
 
     unless loaded?
       raise Pagetience::Exceptions::Timeout, "Timed out after polling every #{@_poller.polling}s for #{@_poller.timeout}s waiting for the page to be loaded."
@@ -84,8 +84,8 @@ module Pagetience
   private
 
   def determine_platform
-    @element_platform = Pagetience::Platforms::Base.find(self)
+    @element_platform = Pagetience::ElementPlatforms::Base.find(self)
 
-    raise StandardError, 'Could not determine what page object platform is being used.' unless @element_platform
+    raise Pagetience::Exceptions::Platform, 'Could not determine what element platform is being used.' unless @element_platform
   end
 end

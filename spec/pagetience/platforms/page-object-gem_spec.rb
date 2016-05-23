@@ -6,15 +6,11 @@ class KlazzWithPageObject
   button :foo, id: 'foo'
 end
 
-describe Pagetience::Platforms::PageObjectGem do
+describe Pagetience::ElementPlatforms::PageObjectGem do
   let(:browser) { mock_watir_browser }
   let(:element) { instance_double(Watir::Element) }
   let(:klazz) { KlazzWithPageObject.new browser }
-  let(:platform) { Pagetience::Platforms::PageObjectGem.new klazz }
-
-  it 'should not be considered a browser' do
-    expect(platform.is_browser?).to eq false
-  end
+  let(:platform) { Pagetience::ElementPlatforms::PageObjectGem.new klazz }
 
   it 'should have a browser' do
     expect(platform.browser).to eq klazz.browser
