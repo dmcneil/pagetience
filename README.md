@@ -51,7 +51,7 @@ class FirstPage
     self.a = 'a'
     self.b
 
-    transition_to(SecondPage)
+    transition_to SecondPage
   end
 end
 
@@ -65,15 +65,15 @@ class SecondPage
   def back_to_a
     self.c
 
-    transition_to(FirstPage, 15, 5) # wait up to 15 seconds, polling every 5 seconds
+    transition_to FirstPage, 15, 5 # wait up to 15 seconds, polling every 5 seconds
   end
 end
-  
+
 # In a test
 
 @current_page = FirstPage.new(@browser).go_to_b
-expect(@current_page.loaded?).to eq true
-expect(@current_page).to be_an_instance_of SecondPage
+expect(@current_page.loaded?).to eq true # true
+expect(@current_page).to be_an_instance_of SecondPage # true
 ```
 
 #### Adjusting the Timeout/Polling
