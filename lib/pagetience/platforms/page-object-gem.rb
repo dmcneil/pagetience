@@ -16,6 +16,7 @@ module Pagetience
         @browser = @page_object_instance.browser
       end
 
+      # TODO
       def platform_initialize
         @page_object_instance.instance_eval do
           PageObject.instance_method(:initialize).bind(self).call(@browser)

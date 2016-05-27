@@ -38,7 +38,7 @@ module Pagetience
     base.extend ClassMethods
   end
 
-  def initialize(browser, visit=false)
+  def initialize(browser, *args)
     @browser = browser
 
     determine_platform
