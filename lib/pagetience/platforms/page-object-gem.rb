@@ -16,9 +16,12 @@ module Pagetience
         @browser = @page_object_instance.browser
       end
 
-      def platform_initialize
+      def platform_initialize(args=[])
+        @page_object_instance.class.send(:define_method, :visit) do
+          args[0] || false
+        end
         @page_object_instance.instance_eval do
-          PageObject.instance_method(:initialize).bind(self).call(@browser)
+          PageObject.instance_method(:initialize).bind(self).call(@browser, visit)
         end
       end
 

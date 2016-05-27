@@ -16,7 +16,7 @@ module Pagetience
         @browser = nil
       end
 
-      def platform_initialize; end
+      def platform_initialize(*args); end
 
       def underlying_element_for(sym)
         nil

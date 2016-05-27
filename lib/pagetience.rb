@@ -28,8 +28,7 @@ module Pagetience
 
   attr_accessor :_waiting_timeout, :_waiting_polling
 
-  attr_reader :browser
-  attr_reader :loaded
+  attr_reader :browser, :loaded
 
   attr_reader :element_platform
   attr_reader :_poller, :_required_elements, :_underlying_elements
@@ -38,11 +37,11 @@ module Pagetience
     base.extend ClassMethods
   end
 
-  def initialize(browser)
+  def initialize(browser, *args)
     @browser = browser
 
     determine_platform
-    @element_platform.platform_initialize
+    @element_platform.platform_initialize args
 
     @loaded = false
     @_waiting_timeout = _waiting_timeout || 30
