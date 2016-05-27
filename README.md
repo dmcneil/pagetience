@@ -35,6 +35,47 @@ end
 
 When an instance of your page object is created then the required elements will be checked for.
 
+#### Page transitions
+Using the `transition_to` method within your page object, you can now wait for an expected page to transition to.
+
+```ruby
+class FirstPage
+  include PageObject
+  include Pagetience
+
+  text_field :a, id: 'a'
+  button :b, id: 'b'
+  required :a, :b
+
+  def go_to_b
+    self.a = 'a'
+    self.b
+
+    transition_to SecondPage
+  end
+end
+
+class SecondPage
+  include PageObject
+  include Pagetience
+
+  button :c, id: 'c'
+  required :c
+
+  def back_to_a
+    self.c
+
+    transition_to FirstPage, 15, 5 # wait up to 15 seconds, polling every 5 seconds
+  end
+end
+
+# In a test
+
+@current_page = FirstPage.new(@browser).go_to_b
+expect(@current_page.loaded?).to eq true # true
+expect(@current_page).to be_an_instance_of SecondPage # true
+```
+
 #### Adjusting the Timeout/Polling
 You can use the `waiting` method to specify how long you want to wait and, optionally, at what interval to poll the page for element visibility.
 
