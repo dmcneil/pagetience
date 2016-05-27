@@ -80,6 +80,12 @@ module Pagetience
     end
   end
 
+  def transition_to(page, timeout=30, polling=1)
+    page = page.new browser
+    Pagetience::Meditate.for(timeout: timeout, polling: polling, msg: 'Timed out waiting for page transition.', expecting: true) { page.loaded? }
+    page
+  end
+
   private
 
   def determine_platform

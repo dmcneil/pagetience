@@ -9,6 +9,8 @@ class SomePage
   waiting 3, 1
 end
 
+class AnotherPage < SomePage; end
+
 class SomePageWithoutPlatform
   include Pagetience
 end
@@ -122,6 +124,12 @@ describe Pagetience do
 
       it 'should set the polling' do
         expect(page._waiting_polling).to eq 1
+      end
+    end
+
+    describe '.transition_to' do
+      it 'transitions to another page' do
+        expect(page.transition_to(AnotherPage)).to be_an_instance_of AnotherPage
       end
     end
   end
