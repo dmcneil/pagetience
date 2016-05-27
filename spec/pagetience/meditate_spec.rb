@@ -16,6 +16,18 @@ describe Pagetience::Meditate do
     expect{ timer.until_enlightened }.to raise_error ArgumentError
   end
 
+  it 'can also be created using .for' do
+    expect(Pagetience::Meditate).to respond_to :for
+  end
+
+  describe '.for' do
+    it 'creates and executes on the fly' do
+      calls = []
+      Pagetience::Meditate.for(timeout: 18, polling: 5, expecting: ['Hello', 'Hello', 'Hello']) { calls << 'Hello' }
+      expect(calls.size).to eq 3
+    end
+  end
+
   it 'will execute a block every N seconds', type: :slow do
     calls = []
     timer = Pagetience::Meditate.new(18, 5) { calls << 'Hello' }
