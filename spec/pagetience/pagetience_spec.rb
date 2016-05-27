@@ -32,6 +32,11 @@ describe Pagetience do
       expect(page.element_platform).to be_a_kind_of Pagetience::ElementPlatforms::PageObjectGem
     end
 
+    it 'should support optional params' do
+      page = SomePage.new browser, true
+      expect(page.loaded?).to eq true
+    end
+
     it 'should look for a browser variable' do
       # pending
     end

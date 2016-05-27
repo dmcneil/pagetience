@@ -16,6 +16,18 @@ describe Pagetience::ElementPlatforms::PageObjectGem do
     expect(platform.browser).to eq klazz.browser
   end
 
+  it 'should optionally take the visit param' do
+    class KlazzPage
+      include PageObject
+      include Pagetience
+
+      button :foo, id: 'foo'
+    end
+
+    klazz = KlazzPage.new browser, true
+    expect(klazz.visit).to eq true
+  end
+
   it 'should have a class instance that includes PageObject' do
     expect(platform.page_object_instance).to eq klazz
   end
