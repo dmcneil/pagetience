@@ -51,7 +51,7 @@ class FirstPage
     self.a = 'a'
     self.b
 
-    transition_to SecondPage
+    wait_for_transition_to SecondPage
   end
 end
 
@@ -65,7 +65,7 @@ class SecondPage
   def back_to_a
     self.c
 
-    transition_to FirstPage, 15, 5 # wait up to 15 seconds, polling every 5 seconds
+    wait_for_transition_to FirstPage, 15, 5 # wait up to 15 seconds, polling every 5 seconds
   end
 end
 
