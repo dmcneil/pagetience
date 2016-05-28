@@ -85,6 +85,7 @@ module Pagetience
     Pagetience::Meditate.for(timeout: timeout, polling: polling, msg: 'Timed out waiting for page transition.', expecting: true) { page.loaded? }
     page
   end
+  alias_method :wait_for_transition_to, :transition_to
 
   private
 
