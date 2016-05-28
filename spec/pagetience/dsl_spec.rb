@@ -7,8 +7,6 @@ class FirstPage
   include Pagetience
 end
 
-class SecondPage < FirstPage; end
-
 describe Pagetience::DSL do
   let(:browser) { mock_watir_browser }
   let(:page) { FirstPage.new(browser) }
