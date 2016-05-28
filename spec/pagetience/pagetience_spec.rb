@@ -132,5 +132,12 @@ describe Pagetience do
         expect(page.transition_to(AnotherPage)).to be_an_instance_of AnotherPage
       end
     end
+
+    describe 'browser helpers' do
+      it 'keeps track of the current page' do
+        expected_page = page.transition_to AnotherPage
+        expect(browser.current_page).to eq expected_page
+      end
+    end
   end
 end

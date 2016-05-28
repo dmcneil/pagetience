@@ -21,7 +21,7 @@ describe Pagetience::Meditate do
   end
 
   describe '.for' do
-    it 'creates and executes on the fly' do
+    it 'creates and executes on the fly', type: :slow do
       calls = []
       Pagetience::Meditate.for(timeout: 18, polling: 5, expecting: ['Hello', 'Hello', 'Hello']) { calls << 'Hello' }
       expect(calls.size).to eq 3

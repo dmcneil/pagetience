@@ -40,6 +40,9 @@ module Pagetience
   def initialize(browser, *args)
     @browser = browser
 
+    current_page = self
+    @browser.class.send(:define_method, :current_page) { current_page }
+
     determine_platform
     @element_platform.platform_initialize args
 
