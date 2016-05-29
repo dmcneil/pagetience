@@ -36,7 +36,7 @@ end
 When an instance of your page object is created then the required elements will be checked for.
 
 #### Page transitions
-Using the `transition_to` method within your page object, you can now wait for an expected page to transition to.
+Using the `wait_for_transition_to` method within your page object, you can now wait for an expected page to transition to.
 
 ```ruby
 class FirstPage
@@ -74,6 +74,27 @@ end
 @current_page = FirstPage.new(@browser).go_to_b
 expect(@current_page.loaded?).to eq true # true
 expect(@current_page).to be_an_instance_of SecondPage # true
+```
+
+#### Waiting for individual elements
+The `wait_for_element` method allows you to wait for a specific element on the page to be there. It doesn't have to be one of your `required` fields -- it just has to declared.
+
+```ruby
+class SomePage
+  include PageObject
+  include Pagetience
+
+  button :foo, id: 'foo'
+
+  def wait_for_foo
+    wait_for_element :foo
+  end
+
+  def wait_longer_for_foo
+    wait_for_element :foo, 60, 5
+  end
+end
+end
 ```
 
 #### Adjusting the Timeout/Polling

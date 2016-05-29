@@ -23,6 +23,7 @@ describe Pagetience do
   before {
     allow(browser).to receive(:element).with({id: 'foo'}).and_return(element)
     allow(element).to receive(:visible?).and_return(true)
+    allow(element).to receive(:present?).and_return(true)
   }
 
   context 'when included' do
@@ -66,16 +67,6 @@ describe Pagetience do
       end
     end
 
-    describe '.gather_underlying_elements' do
-      it 'respond_to' do
-        expect(page).to respond_to :gather_underlying_elements
-      end
-
-      it 'returns only objects for the specified platform' do
-        expect(page._underlying_elements.size).to be 1
-      end
-    end
-
     describe '.required' do
       it 'should add the method to the page' do
         expect(SomePage).to respond_to :required
@@ -88,27 +79,22 @@ describe Pagetience do
       describe '.wait_for_required_elements' do
         it 'should be loaded when all the required elements are visible' do
           allow(element).to receive(:visible?).and_return false
+          allow(element).to receive(:present?).and_return false
           begin
             page.wait_for_required_elements
           rescue
             # ignored
           end
           allow(element).to receive(:visible?).and_return true
+          allow(element).to receive(:present?).and_return true
           page.wait_for_required_elements
           expect(page.loaded?).to be true
         end
 
         it 'should timeout if an element is never visible' do
           allow(element).to receive(:visible?).and_return false
-          expect { page.wait_for_required_elements }.to raise_error Pagetience::Exceptions::Timeout
-        end
-
-        it 'should use the timeout specified by the waiting method' do
-          expect(page._poller.timeout).to eq 3
-        end
-
-        it 'should use the polling specified by the waiting method' do
-          expect(page._poller.polling).to eq 1
+          allow(element).to receive(:present?).and_return false
+          expect{ page.wait_for_required_elements }.to raise_error Pagetience::Exceptions::Timeout
         end
       end
     end
@@ -127,16 +113,31 @@ describe Pagetience do
       end
     end
 
-    describe '.transition_to' do
+    describe '.wait_for_transition_to' do
       it 'transitions to another page' do
-        expect(page.transition_to(AnotherPage)).to be_an_instance_of AnotherPage
+        expect(page.wait_for_transition_to(AnotherPage)).to be_an_instance_of AnotherPage
       end
     end
 
     describe 'browser helpers' do
       it 'keeps track of the current page' do
-        expected_page = page.transition_to AnotherPage
+        expected_page = page.wait_for_transition_to AnotherPage
         expect(browser.current_page).to eq expected_page
+      end
+    end
+
+    describe '.wait_for_element' do
+      it 'waits for an element to be present' do
+        allow(element).to receive(:visible?).and_return false
+        allow(element).to receive(:present?).and_return false
+        begin
+          page.wait_for_element :foo
+        rescue
+          # ignored
+        end
+        allow(element).to receive(:visible?).and_return true
+        allow(element).to receive(:present?).and_return true
+        page.wait_for_element :foo
       end
     end
   end
