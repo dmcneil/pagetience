@@ -21,6 +21,10 @@ module Pagetience
       def underlying_element_for(sym)
         nil
       end
+
+      def is_element_present?(sym)
+        false
+      end
     end
   end
 end

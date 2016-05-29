@@ -33,7 +33,21 @@ describe Pagetience::ElementPlatforms::PageObjectGem do
   end
 
   it 'should find an underlying element' do
-    allow(browser).to receive(:button).with(id: 'foo').and_return(element)
+    allow(browser).to receive(:button).with(id: 'foo').and_return element
     expect(platform.underlying_element_for(:foo)).to eq element
+  end
+
+  it 'checks if an element is present' do
+    allow(element).to receive(:visible?).and_return false
+    allow(element).to receive(:present?).and_return false
+    allow(browser).to receive(:button).with(id: 'foo').and_return element
+    begin
+      platform.is_element_present? :foo
+    rescue
+      # ignored
+    end
+    allow(element).to receive(:visible?).and_return true
+    allow(element).to receive(:present?).and_return true
+    expect(platform.is_element_present?(:foo)).to eq true
   end
 end

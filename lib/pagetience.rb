@@ -31,7 +31,7 @@ module Pagetience
   attr_reader :browser, :loaded
 
   attr_reader :element_platform
-  attr_reader :_poller, :_required_elements, :_underlying_elements
+  attr_reader :_required_elements
 
   def self.included(base)
     base.extend ClassMethods
@@ -51,8 +51,6 @@ module Pagetience
     @_waiting_polling = _waiting_polling || 1
 
     @_required_elements = _required_elements || []
-    @_underlying_elements = []
-    gather_underlying_elements
     wait_for_required_elements
   end
 
@@ -60,35 +58,43 @@ module Pagetience
     !!@loaded
   end
 
-  def gather_underlying_elements
-    @_required_elements.each do |e|
-      @_underlying_elements << @element_platform.underlying_element_for(e)
+  def wait_for_required_elements(timeout=nil, polling=nil)
+    opts = {
+        timeout: timeout || @_waiting_timeout,
+        polling: polling || @_waiting_polling,
+        expecting: true,
+        msg: "Timed out after polling every #{:polling}s for #{:timeout}s waiting for the page to be loaded."
+    }
+    wait_for(opts) do
+      @loaded = true unless @_required_elements.any? { |e| !@element_platform.is_element_present? e }
     end
   end
 
-  def wait_for_required_elements
-    @_poller = Pagetience::Meditate.new(@_waiting_timeout, @_waiting_polling) do
-      begin
-        unless @_underlying_elements.any? { |e| !e.visible? }
-          @loaded = true
-        end
-      rescue
-        # TODO implement better strategy for certain platforms
-      end
-    end
-    @_poller.until_enlightened true
-
-    unless loaded?
-      raise Pagetience::Exceptions::Timeout, "Timed out after polling every #{@_poller.polling}s for #{@_poller.timeout}s waiting for the page to be loaded."
-    end
+  def wait_for_element(sym, timeout=nil, polling=nil)
+    opts = {
+        timeout: timeout || @_waiting_timeout,
+        polling: polling || @_waiting_polling,
+        expecting: true,
+        msg: "Timed out after waiting for the element #{sym} to be present."
+    }
+    wait_for(opts) { @element_platform.is_element_present? sym }
   end
 
-  def transition_to(page, timeout=30, polling=1)
+  def wait_for_transition_to(page, timeout=nil, polling=nil)
     page = page.new browser
-    Pagetience::Meditate.for(timeout: timeout, polling: polling, msg: 'Timed out waiting for page transition.', expecting: true) { page.loaded? }
+    opts = {
+        timeout: timeout || @_waiting_timeout,
+        polling: polling || @_waiting_polling,
+        expecting: true,
+        msg: "Timed out after waiting for the page to transition to #{page}."
+    }
+    wait_for(opts) { page.loaded? }
     page
   end
-  alias_method :wait_for_transition_to, :transition_to
+
+  def wait_for(opts={}, &block)
+    Pagetience::Meditate.for(opts) { block.call }
+  end
 
   private
 

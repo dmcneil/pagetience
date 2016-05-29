@@ -23,6 +23,10 @@ describe Pagetience::ElementPlatforms::Base do
     expect(Pagetience::ElementPlatforms::Base).to respond_to(:find).with(1).argument
   end
 
+  it 'checks if an element is present' do
+    expect(platform).to respond_to(:is_element_present?).with(1).argument
+  end
+
   describe 'self.present(?klazz)' do
     let(:browser) { mock_watir_browser }
     let(:page) { SomePageWithInclude.new browser }

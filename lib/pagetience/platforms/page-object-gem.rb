@@ -28,6 +28,10 @@ module Pagetience
       def underlying_element_for(sym)
         @page_object_instance.send("#{sym}_element").element
       end
+
+      def is_element_present?(sym)
+        @page_object_instance.send("#{sym}_element").visible?
+      end
     end
   end
 end
