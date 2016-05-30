@@ -113,6 +113,16 @@ class GooglePage
 end
 ```
 
+## Configuration
+Pagetience can be configured, too.
+
+```ruby
+Pagetience.configure do |config|
+  config.timeout = 60
+  config.polling = 5
+end
+```
+
 ## Supported Platforms
 Currently, this gem only works with the [page-object](https://github.com/cheezy/page-object) gem. It's a high priority to make working with other page object/webdriver libraries easier.
 
