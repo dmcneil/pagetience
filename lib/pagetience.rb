@@ -1,4 +1,4 @@
-require 'pagetience/exceptions'
+require 'pagetience/configuration'
 require 'pagetience/meditate'
 require 'pagetience/version'
 
@@ -8,6 +8,19 @@ require 'pagetience/platforms/page-object-gem'
 require 'pagetience/platforms/element_platforms'
 
 module Pagetience
+  class TimeoutError < StandardError; end
+  class PlatformError < StandardError; end
+  class ConfigurationError < StandardError; end
+
+  class << self
+    attr_accessor :configuration
+
+    def configure
+      self.configuration ||= Configuration.new
+      yield configuration
+    end
+  end
+
   module ClassMethods
     def required(*elements)
       elements.keep_if { |e| e.is_a? Symbol }
@@ -47,8 +60,8 @@ module Pagetience
     @element_platform.platform_initialize args
 
     @loaded = false
-    @_waiting_timeout = _waiting_timeout || 30
-    @_waiting_polling = _waiting_polling || 1
+    @_waiting_timeout = _waiting_timeout || Pagetience.configuration.timeout
+    @_waiting_polling = _waiting_polling || Pagetience.configuration.polling
 
     @_required_elements = _required_elements || []
     wait_for_required_elements
@@ -101,6 +114,6 @@ module Pagetience
   def determine_platform
     @element_platform = Pagetience::ElementPlatforms::Base.find(self)
 
-    raise Pagetience::Exceptions::Platform, 'Could not determine what element platform is being used.' unless @element_platform
+    raise Pagetience::PlatformError, 'Could not determine what element platform is being used.' unless @element_platform
   end
 end
