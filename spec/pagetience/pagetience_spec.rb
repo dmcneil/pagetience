@@ -49,7 +49,7 @@ describe Pagetience do
     end
 
     it 'should raise an exception if no platform found' do
-      expect{SomePageWithoutPlatform.new(browser)}.to raise_error Pagetience::Exceptions::Platform
+      expect{SomePageWithoutPlatform.new(browser)}.to raise_error Pagetience::PlatformError
     end
 
     describe 'waiting defaults' do
@@ -94,7 +94,7 @@ describe Pagetience do
         it 'should timeout if an element is never visible' do
           allow(element).to receive(:visible?).and_return false
           allow(element).to receive(:present?).and_return false
-          expect{ page.wait_for_required_elements }.to raise_error Pagetience::Exceptions::Timeout
+          expect{ page.wait_for_required_elements }.to raise_error Pagetience::TimeoutError
         end
       end
     end

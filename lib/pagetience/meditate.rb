@@ -29,7 +29,7 @@ module Pagetience
         @timeout = @timeout - @polling
       end
 
-      raise Pagetience::Exceptions::Timeout, msg unless @latest_result == expected
+      raise Pagetience::TimeoutError, msg unless @latest_result == expected
 
       @latest_result
     end
