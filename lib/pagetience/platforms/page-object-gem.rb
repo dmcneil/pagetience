@@ -1,36 +1,33 @@
 module Pagetience
-  module ElementPlatforms
-    class PageObjectGem < Base
-      attr_reader :page_object_instance
-
+  module Platform
+    class PageObjectGem
       class << self
-        def present?(klazz)
-          klazz.class.ancestors.include? PageObject
+        def init(*args)
+          page = args[0][:page]
+          page.class.send(:define_method, :visit) do
+            args[0][:args][1] || false
+          end
+          page.instance_eval do
+            PageObject.instance_method(:initialize).bind(self).call(page.browser, visit)
+          end
+
+          self.new page
         end
       end
 
-      def initialize(klazz)
-        super
+      attr_reader :page_object, :browser
 
-        @page_object_instance = klazz
-        @browser = @page_object_instance.browser
-      end
-
-      def platform_initialize(args=[])
-        @page_object_instance.class.send(:define_method, :visit) do
-          args[0] || false
-        end
-        @page_object_instance.instance_eval do
-          PageObject.instance_method(:initialize).bind(self).call(@browser, visit)
-        end
+      def initialize(page)
+        @page_object = page
+        @browser = @page_object.browser
       end
 
       def underlying_element_for(sym)
-        @page_object_instance.send("#{sym}_element").element
+        @page_object.send("#{sym}_element").element
       end
 
       def is_element_present?(sym)
-        @page_object_instance.send("#{sym}_element").visible?
+        @page_object.send("#{sym}_element").visible?
       end
     end
   end

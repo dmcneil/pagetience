@@ -2,7 +2,8 @@ module Pagetience
   class Configuration
     VALID_PROPERTIES = [
         :timeout,
-        :polling
+        :polling,
+        :platform
     ]
 
     attr_accessor *VALID_PROPERTIES
@@ -13,9 +14,13 @@ module Pagetience
     # Default polling in seconds
     DEFAULT_POLLING = 1
 
+    # Default element platform
+    DEFAULT_PLATFORM = Pagetience::Platform::PageObjectGem
+
     def initialize
       @timeout = DEFAULT_TIMEOUT
       @polling = DEFAULT_POLLING
+      @platform = DEFAULT_PLATFORM
     end
 
     def method_missing(sym, *args)

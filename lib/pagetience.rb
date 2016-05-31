@@ -1,11 +1,8 @@
+require 'pagetience/platforms/page-object-gem'
+
 require 'pagetience/configuration'
 require 'pagetience/meditate'
 require 'pagetience/version'
-
-require 'pagetience/platforms/base'
-require 'pagetience/platforms/page-object-gem'
-
-require 'pagetience/platforms/element_platforms'
 
 module Pagetience
   class TimeoutError < StandardError; end
@@ -51,16 +48,15 @@ module Pagetience
     base.extend ClassMethods
   end
 
-  def initialize(browser, *args)
+  def initialize(*args)
     # Create configuration if one wasn't specified
     Pagetience.config { |c| }
 
     # Set the browser and the .current_page method on it
-    @browser = browser
+    @browser = args[0]
     set_current_page
 
-    determine_platform
-    @element_platform.platform_initialize args
+    @element_platform = Pagetience.config.platform.init page: self, args: args
 
     @loaded = false
     @_waiting_timeout = _waiting_timeout || Pagetience.config.timeout
@@ -113,12 +109,6 @@ module Pagetience
   end
 
   private
-
-  def determine_platform
-    @element_platform = Pagetience::ElementPlatforms::Base.find(self)
-
-    raise Pagetience::PlatformError, 'Could not determine what element platform is being used.' unless @element_platform
-  end
 
   def set_current_page
     current_page = self

@@ -31,25 +31,9 @@ describe Pagetience do
       expect(SomePage.ancestors).to include Pagetience::ClassMethods
     end
 
-    it 'should look at ancestors for a supported platform' do
-      expect(page.element_platform).to be_a_kind_of Pagetience::ElementPlatforms::PageObjectGem
-    end
-
     it 'should support optional params' do
       page = SomePage.new browser, true
       expect(page.loaded?).to eq true
-    end
-
-    it 'should look for a browser variable' do
-      # pending
-    end
-
-    it 'should look for a known browser in any instance variables' do
-      # pending
-    end
-
-    it 'should raise an exception if no platform found' do
-      expect{SomePageWithoutPlatform.new(browser)}.to raise_error Pagetience::PlatformError
     end
 
     describe 'waiting defaults' do
