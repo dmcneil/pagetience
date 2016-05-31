@@ -51,7 +51,6 @@ module Pagetience
   end
 
   def initialize(*args)
-    # Set the browser and the .current_page method on it
     @browser = args[0]
     set_current_page
 
@@ -68,6 +67,9 @@ module Pagetience
     !!@loaded
   end
 
+  # Waits for all elements specified by .required to be present
+  # @param [Fixnum] timeout Time to wait in seconds
+  # @param [Fixnum] polling How often to poll
   def wait_for_required_elements(timeout=nil, polling=nil)
     opts = {
         timeout: timeout,
@@ -79,6 +81,10 @@ module Pagetience
     end
   end
 
+  # Wait for an element to be present
+  # @param [Symbol] sym Name of the element
+  # @param [Fixnum] timeout Time to wait in seconds
+  # @param [Fixnum] polling How often to poll
   def wait_for_element(sym, timeout=nil, polling=nil)
     opts = {
         timeout: timeout,
@@ -88,6 +94,9 @@ module Pagetience
     wait_for(opts) { @element_platform.is_element_present? sym }
   end
 
+  # Wait for a transition to another page
+  # @param [Fixnum] timeout Time to wait in seconds
+  # @param [Fixnum] polling How often to poll
   def wait_for_transition_to(page, timeout=nil, polling=nil)
     page = page.new browser
     opts = {
@@ -99,6 +108,13 @@ module Pagetience
     page
   end
 
+  # Generic waiting method
+  # @param [Hash] opts
+  # Valid options:
+  # :timeout = Time to wait in seconds
+  # :polling = How often to poll
+  # :expecting = The expected result for the block to return
+  # :msg = The exception message if the timeout occurs
   def wait_for(opts={}, &block)
     opts = {
         timeout: @_waiting_timeout,
@@ -113,6 +129,7 @@ module Pagetience
 
   private
 
+  # Sets .current on the browser
   def set_current_page
     current_page = self
     @browser.class.send(:define_method, :current_page) { current_page }
