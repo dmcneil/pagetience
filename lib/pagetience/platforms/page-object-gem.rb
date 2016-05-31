@@ -2,16 +2,17 @@ module Pagetience
   module Platform
     class PageObjectGem
       class << self
-        def init(*args)
-          page = args[0][:page]
-          page.class.send(:define_method, :visit) do
-            args[0][:args][1] || false
+        def init(base, *args)
+          args.flatten! if args
+
+          base.class.send(:define_method, :visit) do
+            args[1] || false
           end
-          page.instance_eval do
-            PageObject.instance_method(:initialize).bind(self).call(page.browser, visit)
+          base.instance_eval do
+            PageObject.instance_method(:initialize).bind(self).call(base.browser, visit)
           end
 
-          self.new page
+          self.new base
         end
       end
 
