@@ -6,11 +6,11 @@ class KlazzWithPageObject
   button :foo, id: 'foo'
 end
 
-describe Pagetience::ElementPlatforms::PageObjectGem do
+describe Pagetience::Platform::PageObjectGem do
   let(:browser) { mock_watir_browser }
   let(:element) { instance_double(Watir::Element) }
   let(:klazz) { KlazzWithPageObject.new browser }
-  let(:platform) { Pagetience::ElementPlatforms::PageObjectGem.new klazz }
+  let(:platform) { Pagetience::Platform::PageObjectGem.new klazz }
 
   it 'should have a browser' do
     expect(platform.browser).to eq klazz.browser
@@ -29,7 +29,7 @@ describe Pagetience::ElementPlatforms::PageObjectGem do
   end
 
   it 'should have a class instance that includes PageObject' do
-    expect(platform.page_object_instance).to eq klazz
+    expect(platform.page_object).to eq klazz
   end
 
   it 'should find an underlying element' do

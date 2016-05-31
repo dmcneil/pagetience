@@ -1,11 +1,8 @@
+require 'pagetience/platforms/page-object-gem'
+
 require 'pagetience/configuration'
 require 'pagetience/meditate'
 require 'pagetience/version'
-
-require 'pagetience/platforms/base'
-require 'pagetience/platforms/page-object-gem'
-
-require 'pagetience/platforms/element_platforms'
 
 module Pagetience
   class TimeoutError < StandardError; end
@@ -13,10 +10,13 @@ module Pagetience
   class ConfigurationError < StandardError; end
 
   class << self
-    attr_accessor :config
+    attr_writer :config
+
+    def config
+      @config ||= Configuration.new
+    end
 
     def configure
-      self.config ||= Configuration.new
       yield config
     end
   end
@@ -43,7 +43,6 @@ module Pagetience
   # They can be messed with though, if you ever see fit.
   attr_accessor :_waiting_timeout, :_waiting_polling, :_required_elements
 
-
   attr_reader :browser
   attr_reader :element_platform
 
@@ -51,21 +50,16 @@ module Pagetience
     base.extend ClassMethods
   end
 
-  def initialize(browser, *args)
-    # Create configuration if one wasn't specified
-    Pagetience.config { |c| }
-
+  def initialize(*args)
     # Set the browser and the .current_page method on it
-    @browser = browser
+    @browser = args[0]
     set_current_page
 
-    determine_platform
-    @element_platform.platform_initialize args
+    @element_platform = Pagetience.config.platform.init self, args
 
     @loaded = false
     @_waiting_timeout = _waiting_timeout || Pagetience.config.timeout
     @_waiting_polling = _waiting_polling || Pagetience.config.polling
-
     @_required_elements = _required_elements || []
     wait_for_required_elements
   end
@@ -76,9 +70,8 @@ module Pagetience
 
   def wait_for_required_elements(timeout=nil, polling=nil)
     opts = {
-        timeout: timeout || @_waiting_timeout,
-        polling: polling || @_waiting_polling,
-        expecting: true,
+        timeout: timeout,
+        polling: polling,
         msg: "Timed out after polling every #{:polling}s for #{:timeout}s waiting for the page to be loaded."
     }
     wait_for(opts) do
@@ -88,9 +81,8 @@ module Pagetience
 
   def wait_for_element(sym, timeout=nil, polling=nil)
     opts = {
-        timeout: timeout || @_waiting_timeout,
-        polling: polling || @_waiting_polling,
-        expecting: true,
+        timeout: timeout,
+        polling: polling,
         msg: "Timed out after waiting for the element #{sym} to be present."
     }
     wait_for(opts) { @element_platform.is_element_present? sym }
@@ -99,9 +91,8 @@ module Pagetience
   def wait_for_transition_to(page, timeout=nil, polling=nil)
     page = page.new browser
     opts = {
-        timeout: timeout || @_waiting_timeout,
-        polling: polling || @_waiting_polling,
-        expecting: true,
+        timeout: timeout,
+        polling: polling,
         msg: "Timed out after waiting for the page to transition to #{page}."
     }
     wait_for(opts) { page.loaded? }
@@ -109,16 +100,18 @@ module Pagetience
   end
 
   def wait_for(opts={}, &block)
+    opts = {
+        timeout: @_waiting_timeout,
+        polling: @_waiting_polling,
+        expecting: true,
+        msg: "Timed out after waiting for #{@_waiting_timeout}s, polling every #{@_waiting_polling}s."
+    }.merge(opts) do |key, old, new|
+      new.nil? ? old : new
+    end
     Pagetience::Meditate.for(opts) { block.call }
   end
 
   private
-
-  def determine_platform
-    @element_platform = Pagetience::ElementPlatforms::Base.find(self)
-
-    raise Pagetience::PlatformError, 'Could not determine what element platform is being used.' unless @element_platform
-  end
 
   def set_current_page
     current_page = self
