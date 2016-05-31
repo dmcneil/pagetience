@@ -97,7 +97,27 @@ end
 end
 ```
 
-#### Adjusting the Timeout/Polling
+## Configuration
+Pagetience can be configured, too.
+
+```ruby
+Pagetience.configure do |config|
+  config.timeout = 60
+  config.polling = 5
+end
+```
+
+It can then be retrieve easily!
+
+```ruby
+def give_me_a_property
+  Pagetience.config.timeout
+end
+
+give_me_a_property # => 60
+````
+
+#### Adjusting the Timeout/Polling for a specific Page
 You can use the `waiting` method to specify how long you want to wait and, optionally, at what interval to poll the page for element visibility.
 
 The default timeout is **30** seconds, polling every second.
@@ -110,16 +130,6 @@ class GooglePage
   text_field :search, name: 'q'
   required :search
   waiting 60, 5 # wait up to 60 seconds, polling every 5 seconds
-end
-```
-
-## Configuration
-Pagetience can be configured, too.
-
-```ruby
-Pagetience.configure do |config|
-  config.timeout = 60
-  config.polling = 5
 end
 ```
 

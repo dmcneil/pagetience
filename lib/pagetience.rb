@@ -13,11 +13,11 @@ module Pagetience
   class ConfigurationError < StandardError; end
 
   class << self
-    attr_accessor :configuration
+    attr_accessor :config
 
     def configure
-      self.configuration ||= Configuration.new
-      yield configuration
+      self.config ||= Configuration.new
+      yield config
     end
   end
 
@@ -39,29 +39,32 @@ module Pagetience
     end
   end
 
-  attr_accessor :_waiting_timeout, :_waiting_polling
+  # "Private" methods to avoid naming collision but remain helpful
+  # They can be messed with though, if you ever see fit.
+  attr_accessor :_waiting_timeout, :_waiting_polling, :_required_elements
 
-  attr_reader :browser, :loaded
 
+  attr_reader :browser
   attr_reader :element_platform
-  attr_reader :_required_elements
 
   def self.included(base)
     base.extend ClassMethods
   end
 
   def initialize(browser, *args)
-    @browser = browser
+    # Create configuration if one wasn't specified
+    Pagetience.config { |c| }
 
-    current_page = self
-    @browser.class.send(:define_method, :current_page) { current_page }
+    # Set the browser and the .current_page method on it
+    @browser = browser
+    set_current_page
 
     determine_platform
     @element_platform.platform_initialize args
 
     @loaded = false
-    @_waiting_timeout = _waiting_timeout || Pagetience.configuration.timeout
-    @_waiting_polling = _waiting_polling || Pagetience.configuration.polling
+    @_waiting_timeout = _waiting_timeout || Pagetience.config.timeout
+    @_waiting_polling = _waiting_polling || Pagetience.config.polling
 
     @_required_elements = _required_elements || []
     wait_for_required_elements
@@ -115,5 +118,10 @@ module Pagetience
     @element_platform = Pagetience::ElementPlatforms::Base.find(self)
 
     raise Pagetience::PlatformError, 'Could not determine what element platform is being used.' unless @element_platform
+  end
+
+  def set_current_page
+    current_page = self
+    @browser.class.send(:define_method, :current_page) { current_page }
   end
 end
