@@ -91,9 +91,8 @@ class SomePage
   end
 
   def wait_longer_for_foo
-    wait_for_element :foo, 60, 5
+    wait_for_element :foo, 60, 5 # wait up to 60 seconds, polling every 5 seconds
   end
-end
 end
 ```
 
