@@ -104,7 +104,7 @@ module Pagetience
         timeout: @_waiting_timeout,
         polling: @_waiting_polling,
         expecting: true,
-        msg: 'Timed out after waiting.'
+        msg: "Timed out after waiting for #{@_waiting_timeout}s, polling every #{@_waiting_polling}s."
     }.merge(opts) do |key, old, new|
       new.nil? ? old : new
     end
