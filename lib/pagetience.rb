@@ -60,6 +60,8 @@ module Pagetience
     @_waiting_timeout = _waiting_timeout || Pagetience.config.timeout
     @_waiting_polling = _waiting_polling || Pagetience.config.polling
     @_required_elements = _required_elements || []
+    @_present_elements = []
+    @_missing_elements = []
     wait_for_required_elements
   end
 
@@ -71,13 +73,22 @@ module Pagetience
   # @param [Fixnum] timeout Time to wait in seconds
   # @param [Fixnum] polling How often to poll
   def wait_for_required_elements(timeout=nil, polling=nil)
-    opts = {
-        timeout: timeout,
-        polling: polling,
-        msg: "Timed out after polling every #{:polling}s for #{:timeout}s waiting for the page to be loaded."
-    }
+    msg = -> do
+      %{Timed out after polling every #{@_waiting_polling}s for #{@_waiting_timeout}s waiting for the page to be loaded.
+      Elements present: #{@_present_elements}
+      Elements missing: #{@_missing_elements}}
+    end
+
+    opts = { timeout: timeout, polling: polling, msg: msg }
     wait_for(opts) do
-      @loaded = true unless @_required_elements.any? { |e| !@element_platform.is_element_present? e }
+      @_missing_elements = []
+      @_required_elements.each do |e|
+        if !@element_platform.is_element_present?(e) && !@_missing_elements.include?(e)
+          @_missing_elements << e
+          @_present_elements = @_required_elements - @_missing_elements
+        end
+      end
+      @loaded = @_missing_elements.empty?
     end
   end
 

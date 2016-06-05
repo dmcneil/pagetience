@@ -75,10 +75,13 @@ describe Pagetience do
           expect(page.loaded?).to be true
         end
 
-        it 'should timeout if an element is never visible' do
+        it 'times out and lists which elements were never found' do
           allow(element).to receive(:visible?).and_return false
           allow(element).to receive(:present?).and_return false
-          expect{ page.wait_for_required_elements }.to raise_error Pagetience::TimeoutError
+
+          expected_msg = /Timed out after polling every \d+s for \d+s waiting for the page to be loaded.\s*Elements present: \[\]\s*Elements missing: \[:\w+\]/
+
+          expect{ page.wait_for_required_elements }.to raise_error Pagetience::TimeoutError, expected_msg
         end
       end
     end
