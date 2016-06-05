@@ -29,6 +29,7 @@ module Pagetience
         @timeout = @timeout - @polling
       end
 
+      msg = msg.send(:call) if msg.is_a? Proc
       raise Pagetience::TimeoutError, msg unless @latest_result == expected
 
       @latest_result
